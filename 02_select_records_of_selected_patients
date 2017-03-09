@@ -1,0 +1,157 @@
+--- create subset of admissions table of selected cancer patients
+CREATE TABLE cancer.admissions AS
+SELECT 
+  admissions.subject_id, 
+  admissions.hadm_id, 
+  admissions.admittime, 
+  admissions.dischtime, 
+  admissions.deathtime, 
+  admissions.edregtime, 
+  admissions.edouttime
+FROM 
+  mimiciii.admissions, 
+  mimiciii.diagnoses_icd
+WHERE
+  admissions.subject_id IN
+  (SELECT DISTINCT subject_id FROM mimiciii.diagnoses_icd 
+  WHERE icd9_code SIMILAR TO '14%|15%|16%|17%|18%|19%|20%|21%|22%|23%');
+ 
+ --- create subset of chartevents table
+CREATE TABLE cancer.chartevents AS
+SELECT 
+  chartevents.subject_id, 
+  chartevents.hadm_id, 
+  d_items.label activity, 
+  d_items.category category, 
+  chartevents.charttime
+FROM 
+  mimiciii.chartevents, 
+  mimiciii.d_items
+WHERE 
+  d_items.itemid = chartevents.itemid AND
+  chartevents.subject_id IN
+  (SELECT DISTINCT subject_id FROM mimiciii.diagnoses_icd 
+  WHERE icd9_code SIMILAR TO '14%|15%|16%|17%|18%|19%|20%|21%|22%|23%');
+  
+  --- create subset of cptevents table
+  CREATE TABLE cancer.cptevents AS
+  SELECT 
+  cptevents.subject_id, 
+  cptevents.hadm_id, 
+  d_items.label activity, 
+  d_items.category, 
+  cptevents.chartdate
+FROM 
+  mimiciii.diagnoses_icd, 
+  mimiciii.d_items, 
+  mimiciii.cptevents
+WHERE 
+  cptevents.cpt_cd = d_items.label AND
+  cptevents.subject_id IN
+  (SELECT DISTINCT subject_id FROM mimiciii.diagnoses_icd 
+  WHERE icd9_code SIMILAR TO '14%|15%|16%|17%|18%|19%|20%|21%|22%|23%');
+
+--- create subset of datetimeevents table
+CREATE TABLE cancer.datetimeevents AS
+SELECT 
+  datetimeevents.subject_id, 
+  datetimeevents.hadm_id, 
+  d_items.label, 
+  d_items.category, 
+  datetimeevents.charttime
+FROM 
+  mimiciii.datetimeevents, 
+  mimiciii.d_items
+WHERE 
+  datetimeevents.itemid = d_items.itemid AND
+  datetimeevents.subject_id IN
+  (SELECT DISTINCT subject_id FROM mimiciii.diagnoses_icd 
+  WHERE icd9_code SIMILAR TO '14%|15%|16%|17%|18%|19%|20%|21%|22%|23%');
+
+--- create subset of inputevents_cv table
+CREATE TABLE cancer.inputevents_cv AS
+SELECT 
+  inputevents_cv.subject_id, 
+  inputevents_cv.hadm_id, 
+  d_items.label, 
+  d_items.category, 
+  inputevents_cv.charttime
+FROM 
+  mimiciii.inputevents_cv, 
+  mimiciii.d_items
+WHERE 
+  inputevents_cv.itemid = d_items.itemid AND
+  inputevents_cv.subject_id IN
+  (SELECT DISTINCT subject_id FROM mimiciii.diagnoses_icd 
+  WHERE icd9_code SIMILAR TO '14%|15%|16%|17%|18%|19%|20%|21%|22%|23%');
+
+--- create subset of inputevents_mv table
+CREATE TABLE cancer.inputevents_mv AS
+  SELECT 
+  inputevents_mv.subject_id, 
+  inputevents_mv.hadm_id, 
+  d_items.label activity, 
+  d_items.category, 
+  inputevents_mv.starttime charttime
+FROM 
+  mimiciii.d_items, 
+  mimiciii.inputevents_mv, 
+  mimiciii.d_items
+WHERE 
+  d_items.itemid = inputevents_mv.itemid AND
+   inputevents_mv.subject_id IN
+  (SELECT DISTINCT subject_id FROM mimiciii.diagnoses_icd 
+  WHERE icd9_code SIMILAR TO '14%|15%|16%|17%|18%|19%|20%|21%|22%|23%');
+
+--- create subset of labevents table
+CREATE TABLE cancer.labevents AS
+SELECT 
+  labevents.subject_id, 
+  labevents.hadm_id, 
+  d_labitems.label, 
+  d_labitems.category, 
+  labevents.charttime
+FROM 
+  mimiciii.d_labitems, 
+  mimiciii.labevents
+WHERE 
+  labevents.itemid = d_labitems.itemid AND
+  labevents.subject_id IN
+  (SELECT DISTINCT subject_id FROM mimiciii.diagnoses_icd 
+  WHERE icd9_code SIMILAR TO '14%|15%|16%|17%|18%|19%|20%|21%|22%|23%');
+
+--- create subset of microbiologyevents table
+CREATE TABLE cancer.microbiologyevents AS
+SELECT 
+  microbiologyevents.subject_id, 
+  microbiologyevents.hadm_id, 
+  d_items.label activity, 
+  d_items.category, 
+  microbiologyevents.charttime
+FROM 
+  mimiciii.d_items, 
+  mimiciii.microbiologyevents
+WHERE 
+  microbiologyevents.spec_itemid = d_items.itemid AND
+  microbiologyevents.subject_id IN
+  (SELECT DISTINCT subject_id FROM mimiciii.diagnoses_icd 
+  WHERE icd9_code SIMILAR TO '14%|15%|16%|17%|18%|19%|20%|21%|22%|23%');
+
+--- create subset of noteevents table
+CREATE TABLE cancer.noteevents AS
+SELECT 
+  noteevents.subject_id, 
+  noteevents.hadm_id, 
+  noteevents.description, 
+  noteevents.category, 
+  noteevents.charttime
+FROM 
+  mimiciii.noteevents
+WHERE
+   noteevents.subject_id IN
+  (SELECT DISTINCT subject_id FROM mimiciii.diagnoses_icd 
+  WHERE icd9_code SIMILAR TO '14%|15%|16%|17%|18%|19%|20%|21%|22%|23%');
+
+  
+
+ 
