@@ -1,0 +1,220 @@
+-- create allevents table for cancer type 1
+CREATE TABLE cancer.allevents_type1 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code LIKE '14%');
+  
+  -- create allevents table for cancer type 2
+CREATE TABLE cancer.allevents_type2 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code LIKE '15%');
+  
+-- create allevents table for cancer type 3
+CREATE TABLE cancer.allevents_type3 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code SIMILAR TO '160%|161%|162%|163%|164%|165%');
+  
+-- create allevents table for cancer type 4
+CREATE TABLE cancer.allevents_type4 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code SIMILAR TO '170%|171%|172%|173%|174%|175%');
+  
+  -- create allevents table for cancer type 5
+CREATE TABLE cancer.allevents_type5 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code LIKE '176%');
+  
+-- create allevents table for cancer type 6
+CREATE TABLE cancer.allevents_type6 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code LIKE '179%|18%');
+  
+  -- create allevents table for cancer type 7
+CREATE TABLE cancer.allevents_type7 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code LIKE '19%');
+  
+-- create allevents table for cancer type 8
+CREATE TABLE cancer.allevents_type8 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code SIMILAR TO '200%|201%|202%|203%|204%|205%|206%|207%|208%');
+  
+-- create allevents table for cancer type 9
+CREATE TABLE cancer.allevents_type9 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code LIKE '209%');
+  
+-- create allevents table for cancer type 10
+CREATE TABLE cancer.allevents_type10 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code SIMILAR TO '21%|22%');
+  
+-- create allevents table for cancer type 11
+CREATE TABLE cancer.allevents_type11 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code SIMILAR TO '230%|231%|232%|233%|234%');
+  
+-- create allevents table for cancer type 12
+CREATE TABLE cancer.allevents_type12 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code SIMILAR TO '235%|236%|237%|238%');
+  
+-- create allevents table for cancer type 13
+CREATE TABLE cancer.allevents_type13 AS
+SELECT DISTINCT
+  allevents.subject_id, 
+  allevents.hadm_id, 
+  allevents.activity, 
+  allevents.category, 
+  allevents.tname, 
+  allevents.charttime
+FROM 
+  cancer.allevents
+WHERE 
+  allevents.subject_id IN
+  (SELECT DISTINCT subject_id 
+	FROM mimiciii.diagnoses_icd
+	WHERE icd9_code LIKE '239%');
