@@ -1,0 +1,131 @@
+CREATE TABLE cancer.allevents AS
+(SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'admissions' tablename,
+  activity AS category,
+  activity AS activity, 
+  charttime
+FROM 
+  cancer.admissions
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'chartevents',
+  category,
+  activity, 
+  charttime
+FROM 
+  cancer.chartevents
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'datetimeevents',
+  category,
+  activity, 
+  charttime
+FROM 
+  cancer.datetimeevents
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'icustays',
+  activity,
+  activity, 
+  charttime
+FROM 
+  cancer.icustays
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'inputevents_cv',
+  category,
+  activity, 
+  charttime
+FROM 
+  cancer.inputevents_cv
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'inputevents_mv',
+  category,
+  activity, 
+  starttime
+FROM 
+  cancer.inputevents_mv
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'labevents',
+  category,
+  activity, 
+  charttime
+FROM 
+  cancer.labevents
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'microbiologyevents',
+  category,
+  activity, 
+  charttime
+FROM 
+  cancer.microbiologyevents
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'noteevents',
+  category,
+  activity, 
+  charttime
+FROM 
+  cancer.noteevents
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'outputevents',
+  category,
+  activity, 
+  charttime
+FROM 
+  cancer.outputevents
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'procedureevents_mv',
+  category,
+  activity, 
+  starttime
+FROM 
+  cancer.procedureevents_mv
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'services',
+  activity,
+  activity, 
+  charttime
+FROM 
+  cancer.services
+UNION ALL
+SELECT DISTINCT
+  subject_id, 
+  hadm_id, 
+  'transfers',
+  category,
+  activity, 
+  charttime
+FROM 
+  cancer.transfers)
+ORDER BY subject_id, hadm_id, charttime, activity;

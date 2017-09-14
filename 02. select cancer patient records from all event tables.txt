@@ -1,0 +1,334 @@
+//cptevents
+CREATE TABLE cancer.cptevents AS
+SELECT DISTINCT
+  cptevents.subject_id, 
+  cptevents.hadm_id, 
+  cptevents.sectionheader, 
+  cptevents.subsectionheader,
+  cptevents.chartdate
+FROM 
+  mimiciii.cptevents, 
+  mimiciii.diagnoses_icd
+WHERE 
+  cptevents.hadm_id = diagnoses_icd.hadm_id AND
+  cptevents.chartdate IS NOT NULL AND
+  subsectionheader IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%';
+
+//datetimeevents
+CREATE TABLE cancer.datetimeevents AS
+SELECT DISTINCT
+  datetimeevents.subject_id, 
+  datetimeevents.hadm_id, 
+  datetimeevents.icustay_id, 
+  d_items.category AS category, 
+  d_items.label AS activity, 
+  datetimeevents.charttime, 
+  caregivers.label AS caregiver
+FROM 
+  mimiciii.datetimeevents, 
+  mimiciii.diagnoses_icd, 
+  mimiciii.d_items, 
+  mimiciii.caregivers
+WHERE 
+  datetimeevents.hadm_id = diagnoses_icd.hadm_id AND
+  datetimeevents.itemid = d_items.itemid AND
+  caregivers.cgid = datetimeevents.cgid AND
+  d_items.label IS NOT NULL AND
+  charttime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ORDER BY subject_id, hadm_id, icustay_id, charttime, activity;
+
+//icustays
+CREATE TABLE cancer.icustays AS
+(SELECT 
+  icustays.subject_id, 
+  icustays.hadm_id, 
+  icustays.icustay_id, 
+  'ICU in' AS activity,
+  icustays.intime AS charttime
+FROM 
+  mimiciii.diagnoses_icd, 
+  mimiciii.icustays
+WHERE 
+  icustays.hadm_id = diagnoses_icd.hadm_id AND
+  icustays.intime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+UNION ALL
+SELECT
+  icustays.subject_id, 
+  icustays.hadm_id, 
+  icustays.icustay_id, 
+  'ICU out',
+  icustays.outtime
+FROM 
+  mimiciii.diagnoses_icd, 
+  mimiciii.icustays
+WHERE 
+  icustays.hadm_id = diagnoses_icd.hadm_id AND
+  icustays.outtime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%')
+ORDER BY subject_id, hadm_id, icustay_id, charttime, activity;
+
+//inputevents_cv
+CREATE TABLE cancer.inputevents_cv AS
+SELECT DISTINCT 
+  inputevents_cv.subject_id, 
+  inputevents_cv.hadm_id, 
+  inputevents_cv.icustay_id, 
+  d_items.category, 
+  d_items.label AS activity, 
+  inputevents_cv.charttime, 
+  caregivers.label AS caregiver
+FROM 
+  mimiciii.diagnoses_icd, 
+  mimiciii.inputevents_cv, 
+  mimiciii.d_items, 
+  mimiciii.caregivers
+WHERE 
+  inputevents_cv.hadm_id = diagnoses_icd.hadm_id AND
+  inputevents_cv.itemid = d_items.itemid AND
+  inputevents_cv.cgid = caregivers.cgid AND
+  d_items.label IS NOT NULL AND
+  charttime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ORDER BY subject_id, hadm_id, charttime, activity;
+
+//inputevents_mv
+CREATE TABLE cancer.inputevents_mv AS
+SELECT 
+  inputevents_mv.subject_id, 
+  inputevents_mv.hadm_id, 
+  inputevents_mv.icustay_id, 
+  d_items.category, 
+  d_items.label AS activity, 
+  inputevents_mv.starttime, 
+  inputevents_mv.endtime, 
+  caregivers.label AS caregiver
+FROM 
+  mimiciii.inputevents_mv, 
+  mimiciii.diagnoses_icd, 
+  mimiciii.d_items, 
+  mimiciii.caregivers
+WHERE 
+  inputevents_mv.hadm_id = diagnoses_icd.hadm_id AND
+  inputevents_mv.itemid = d_items.itemid AND
+  inputevents_mv.cgid = caregivers.cgid AND
+  starttime IS NOT NULL AND
+  d_items.label IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ORDER BY subject_id, hadm_id, starttime, activity;
+
+//labevents
+CREATE TABLE cancer.labevents AS
+SELECT 
+  labevents.subject_id, 
+  labevents.hadm_id, 
+  d_labitems.category, 
+  d_labitems.label AS activity, 
+  labevents.charttime
+FROM 
+  mimiciii.diagnoses_icd, 
+  mimiciii.labevents, 
+  mimiciii.d_labitems
+WHERE 
+  labevents.hadm_id = diagnoses_icd.hadm_id AND
+  labevents.itemid = d_labitems.itemid AND
+  d_labitems.label IS NOT NULL AND
+  charttime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ORDER BY subject_id, hadm_id, charttime, activity;
+
+//microbiologyevents
+CREATE TABLE cancer.microbiologyevents AS
+SELECT 
+  microbiologyevents.subject_id, 
+  microbiologyevents.hadm_id, 
+  d_items.category, 
+  d_items.label AS activity, 
+  microbiologyevents.charttime
+FROM 
+  mimiciii.diagnoses_icd, 
+  mimiciii.d_items, 
+  mimiciii.microbiologyevents
+WHERE 
+  microbiologyevents.spec_itemid = d_items.itemid AND
+  microbiologyevents.hadm_id = diagnoses_icd.hadm_id AND
+  d_items.label IS NOT NULL AND
+  charttime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ORDER BY subject_id, hadm_id, charttime, activity;
+
+//noteevents
+CREATE TABLE cancer.noteevents AS
+SELECT 
+  noteevents.subject_id, 
+  noteevents.hadm_id, 
+  noteevents.category, 
+  noteevents.description AS activity, 
+  noteevents.charttime, 
+  caregivers.label AS caregiver
+FROM 
+  mimiciii.diagnoses_icd, 
+  mimiciii.noteevents, 
+  mimiciii.caregivers
+WHERE 
+  noteevents.hadm_id = diagnoses_icd.hadm_id AND
+  noteevents.cgid = caregivers.cgid AND
+  noteevents.description IS NOT NULL AND
+  charttime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ORDER BY subject_id, hadm_id, charttime, activity;
+
+//outputevents
+CREATE TABLE cancer.outputevents AS
+SELECT 
+  outputevents.subject_id, 
+  outputevents.hadm_id, 
+  outputevents.icustay_id, 
+  d_items.category, 
+  d_items.label AS activity, 
+  outputevents.charttime, 
+  caregivers.label AS caregiver
+FROM 
+  mimiciii.diagnoses_icd, 
+  mimiciii.d_items, 
+  mimiciii.outputevents, 
+  mimiciii.caregivers
+WHERE 
+  outputevents.hadm_id = diagnoses_icd.hadm_id AND
+  outputevents.itemid = d_items.itemid AND
+  caregivers.cgid = outputevents.cgid AND
+  d_items.label IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ORDER BY subject_id, hadm_id, charttime, activity;
+
+//prescriptions
+CREATE TABLE cancer.prescriptions AS
+SELECT 
+  prescriptions.subject_id, 
+  prescriptions.hadm_id, 
+  prescriptions.icustay_id, 
+  prescriptions.drug_type AS category, 
+  prescriptions.drug AS activity, 
+  prescriptions.startdate, 
+  prescriptions.enddate
+FROM 
+  mimiciii.diagnoses_icd, 
+  mimiciii.prescriptions
+WHERE 
+  prescriptions.hadm_id = diagnoses_icd.hadm_id AND
+  prescriptions.drug IS NOT NULL AND
+  prescriptions.startdate IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ORDER BY subject_id, hadm_id, startdate, activity;
+
+//procedureevents_mv
+CREATE TABLE cancer.procedureevents_mv AS
+SELECT 
+  procedureevents_mv.subject_id, 
+  procedureevents_mv.hadm_id, 
+  procedureevents_mv.icustay_id, 
+  d_items.category, 
+  d_items.label AS activity, 
+  procedureevents_mv.starttime, 
+  procedureevents_mv.endtime, 
+  caregivers.label AS caregiver
+FROM 
+  mimiciii.diagnoses_icd, 
+  mimiciii.d_items, 
+  mimiciii.caregivers, 
+  mimiciii.procedureevents_mv
+WHERE 
+  procedureevents_mv.hadm_id = diagnoses_icd.hadm_id AND
+  procedureevents_mv.itemid = d_items.itemid AND
+  procedureevents_mv.cgid = caregivers.cgid AND
+  d_items.label IS NOT NULL AND
+  starttime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ORDER BY subject_id, hadm_id, starttime, activity;
+
+//services
+CREATE TABLE cancer.services AS
+SELECT 
+  services.subject_id, 
+  services.hadm_id, 
+  'services' AS category,
+  services.curr_service AS activity, 
+  services.transfertime AS charttime
+FROM 
+  mimiciii.diagnoses_icd, 
+  mimiciii.services
+WHERE 
+  services.hadm_id = diagnoses_icd.hadm_id AND
+  services.curr_service IS NOT NULL AND
+  transfertime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ORDER BY subject_id, hadm_id, transfertime, activity;
+
+//transfers
+CREATE TABLE cancer.transfers AS
+SELECT 
+  transfers.subject_id, 
+  transfers.hadm_id, 
+  transfers.icustay_id, 
+  transfers.eventtype AS category, 
+  concat('transfer into ',transfers.curr_careunit) AS activity, 
+  transfers.intime AS charttime
+FROM
+  mimiciii.diagnoses_icd, 
+  mimiciii.transfers
+WHERE 
+  transfers.hadm_id = diagnoses_icd.hadm_id AND
+  curr_careunit IS NOT NULL AND
+  intime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+UNION ALL
+SELECT 
+  transfers.subject_id, 
+  transfers.hadm_id, 
+  transfers.icustay_id, 
+  transfers.eventtype, 
+  concat('transfer out ',transfers.curr_careunit) AS activity, 
+  transfers.outtime
+FROM
+  mimiciii.diagnoses_icd, 
+  mimiciii.transfers
+WHERE 
+  transfers.hadm_id = diagnoses_icd.hadm_id AND
+  curr_careunit IS NOT NULL AND
+  outtime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+UNION ALL
+SELECT 
+  transfers.subject_id, 
+  transfers.hadm_id, 
+  transfers.icustay_id, 
+  transfers.eventtype, 
+  concat('transfer into ',transfers.curr_wardid) AS activity, 
+  transfers.intime
+FROM
+  mimiciii.diagnoses_icd, 
+  mimiciii.transfers
+WHERE 
+  transfers.hadm_id = diagnoses_icd.hadm_id AND
+  curr_wardid IS NOT NULL AND
+  intime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ UNION ALL
+ SELECT 
+  transfers.subject_id, 
+  transfers.hadm_id, 
+  transfers.icustay_id, 
+  transfers.eventtype, 
+  concat('transfer out ',transfers.curr_wardid) AS activity, 
+  transfers.outtime
+FROM
+  mimiciii.diagnoses_icd, 
+  mimiciii.transfers
+WHERE 
+  transfers.hadm_id = diagnoses_icd.hadm_id AND
+  curr_wardid IS NOT NULL AND
+  outtime IS NOT NULL AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%'
+ORDER BY subject_id, hadm_id, icustay_id, charttime, activity;

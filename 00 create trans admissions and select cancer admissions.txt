@@ -1,0 +1,61 @@
+// create transactional table from admissions
+CREATE TABLE mimiciii.admission_trans AS
+(SELECT DISTINCT
+  admissions.subject_id, 
+  admissions.hadm_id, 
+  'admission' AS activity,
+  admissions.admittime AS charttime
+FROM 
+  mimiciii.admissions
+  WHERE admittime IS NOT NULL
+UNION ALL
+SELECT DISTINCT
+  admissions.subject_id, 
+  admissions.hadm_id, 
+  'discharge',
+  admissions.dischtime
+FROM 
+  mimiciii.admissions
+  WHERE dischtime IS NOT NULL
+UNION ALL
+SELECT DISTINCT
+  admissions.subject_id, 
+  admissions.hadm_id, 
+  'death',
+  admissions.deathtime
+FROM 
+  mimiciii.admissions
+  WHERE deathtime IS NOT NULL
+UNION ALL
+SELECT DISTINCT
+  admissions.subject_id, 
+  admissions.hadm_id, 
+  'ED registration',
+  admissions.edregtime
+ FROM 
+  mimiciii.admissions
+  WHERE edregtime IS NOT NULL
+UNION ALL
+SELECT DISTINCT
+  admissions.subject_id, 
+  admissions.hadm_id, 
+  'ED out',
+  admissions.edouttime
+FROM 
+  mimiciii.admissions
+  WHERE edouttime IS NOT NULL)
+ORDER BY subject_id, hadm_id, charttime, activity;
+
+//select admission records of cancer patients
+CREATE TABLE cancer.admissions AS
+SELECT DISTINCT
+  admission_trans.subject_id, 
+  admission_trans.hadm_id, 
+  admission_trans.activity, 
+  admission_trans.charttime
+FROM 
+  mimiciii.admission_trans, 
+  mimiciii.diagnoses_icd
+WHERE 
+  admission_trans.hadm_id = diagnoses_icd.hadm_id AND
+  diagnoses_icd.icd9_code BETWEEN '14%' AND '24%';
